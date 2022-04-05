@@ -15,14 +15,16 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        // height:'100%'
         // marginTop: 22
     },
     modalView: {
-        margin: 20,
+        // flex: 'grow',
+        // margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
         padding: 35,
-        alignItems: "center",
+        // alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -32,10 +34,13 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5
     },
+    confirmButton: {
+        alignItems: 'center'
+    },
     button: {
         borderRadius: 20,
         padding: 10,
-        elevation: 2
+        elevation: 2,
     },
     buttonOpen: {
         backgroundColor: "#F194FF",

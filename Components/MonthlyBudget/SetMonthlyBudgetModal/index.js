@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/core'
-import { View, Text, FlatList, Dimensions, TouchableOpacity, Pressable, Modal } from 'react-native';
+import { View, Text, FlatList, Dimensions, TouchableOpacity, Pressable, Modal, TextInput, Button } from 'react-native';
 import styles from './styles';
 // import auth from '../../firebase';
 
@@ -11,14 +11,6 @@ const SetMonthlyBudgetModal = (props) => {
     const [modalVisible, setModalVisible] = useState(false);
 
     // const { onPress } = props;
-    // const handleSignOut = () => {
-    //   auth
-    //     .signOut()
-    //     .then(() => {
-    //       navigation.replace("Login")
-    //     })
-    //     .catch(error => alert(error.message))
-    // }
 
     return (
         <View style={styles.container}>
@@ -40,13 +32,24 @@ const SetMonthlyBudgetModal = (props) => {
                 >
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Hello World!</Text>
-                            <Pressable
+                            {/* <Text style={styles.modalText}>Hello World!</Text> */}
+                            <TextInput style={{
+                                // width: '100%',
+                                fontSize: 14,
+                                borderColor: 'grey',
+                                borderWidth: 2,
+                                padding: 2,
+                                marginVertical: 10
+                            }} placeholder='Type Here...' placeholderTextColor={'grey'}></TextInput>
+                            <Text>Enter Your Monthly Budget</Text>
+                           <View style={styles.confirmButton} >
+                           <Pressable
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => setModalVisible(!modalVisible)}
                             >
-                                <Text style={styles.textStyle}>Hide Modal</Text>
+                                <Text style={styles.textStyle}>Confirm Changes</Text>
                             </Pressable>
+                           </View>
                         </View>
                     </View>
                 </Modal>

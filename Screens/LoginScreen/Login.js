@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/core'
 import { auth } from '../../Core/Config';
 
 import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
-// import { db } from '../../src/firebase-config';
+import { db } from '../../Core/Config';
 
 // import { getDatabase, ref, set } from "firebase/database";
 
@@ -47,7 +47,7 @@ const LoginScreen = (props) => {
         const user = userCredentials.user;
         console.log("Account made for", user.email)
         // writeUserData(user.email)
-        // addToUserList(user.email)
+        addToUserList(user.email)
       })
       .catch(error => alert(error.message));
       
