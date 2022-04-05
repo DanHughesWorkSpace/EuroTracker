@@ -63,7 +63,7 @@ const LoginScreen = (props) => {
   }
   return (
     <KeyboardAvoidingView
-      style={styles.container} >
+      style={styles.container}  behaviour="padding"  >
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="email"

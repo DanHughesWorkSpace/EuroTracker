@@ -1,11 +1,14 @@
 import { useNavigation } from '@react-navigation/core'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View , StatusBar} from 'react-native'
-// import { auth } from '../../firebase';
+import { auth } from '../../Core/Config';
 // import { StatusBar } from 'expo-status-bar';
-// import { getAuth } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 // import { database } from 'firebase/database'
-// import Header from '../Header';
+
+import Header from '../../Components/Header';
+import MonthlyBudget from '../../Components/MonthlyBudget';
+import Footer from '../../Components/Footer'
 // import MonthlyBudget from '../Monthly_budget';
 // import FooterButtons from '../Footer_buttons';
 
@@ -16,69 +19,38 @@ import { StyleSheet, Text, TouchableOpacity, View , StatusBar} from 'react-nativ
 
 const HomeScreen = () => {
 
-//   const auth = getAuth();
-//   const user = auth.currentUser;
+  const auth = getAuth();
+  const user = auth.currentUser;
 
-//   let userEmail = '';
+  // let userEmail = '';
 
-//   if (user !== null) {
-//     user.providerData.forEach((profile) => {
-//       userEmail = profile.uid
-//     });
-//   }
-
-//   const navigation = useNavigation()
-
-//   const handleSignOut = () => {
-//     auth
-//       .signOut()
-//       .then(() => {
-//         navigation.replace("Login")
-//       })
-//       .catch(error => alert(error.message))
-//   }
-
-//   const GetData = async () => {
-//     const userData = collection(db, 'users/dan/');
-//     // const userData = collection("users").document("dan").collection("19MAR22")
-//     const userSnapshot = await getDocs(userData);
-//     const userList = userSnapshot.docs.map(doc => doc.data());
-
-//     console.log("test", userList);
-//   }
-
-//   // this is for setting individual user expenses, prob move out of here
-//   const SetData = async () => {
-//     await setDoc(doc(db, "users", "dan", "19MAR22", "Income"), {
-//       value: 10000,
-//       description: "sold car",
-//       category: "Motor Selling"
-//     });
-//   }
-
-  // const testFunction = async () => {
-  //   database()
-  //     .ref('/users/')
-  //     .once('value')
-  //     .then(snapshot => {
-  //       console.log('User data: ', snapshot.val());
-  //     });
+  // if (user !== null) {
+  //   user.providerData.forEach((profile) => {
+  //     userEmail = profile.uid
+  //   });
   // }
+
+  const navigation = useNavigation()
+
+  const handleSignOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        navigation.replace("Login")
+      })
+      .catch(error => alert(error.message))
+  }
+
   return (
-    // <View style={styles.container}>
-    //   <Text>Email: {auth.currentUser?.email}</Text>
-    //   <TouchableOpacity
-    //     onPress={handleSignOut}
-    //     style={styles.button}
-    //   >
-    //     <Text style={styles.buttonText}>Sign out</Text>
-    //   </TouchableOpacity>
-    // </View>
     <View style={styles.container}>
       {/* <Header onPress={handleSignOut} />
       <MonthlyBudget onPress={SetData} />
       <FooterButtons /> */}
-      <Text>hey</Text>
+      {/* <Text>hey</Text> */}
+      {/* <Header/> */}
+      <Header onPress={handleSignOut} />
+      <MonthlyBudget />
+      <Footer />
       <StatusBar style="auto" />
     </View>
   )
