@@ -3,25 +3,18 @@ import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View , StatusBar} from 'react-native'
 import { auth } from '../../Core/Config';
 // import { StatusBar } from 'expo-status-bar';
-import { getAuth } from "firebase/auth";
 // import { database } from 'firebase/database'
 
 import Header from '../../Components/Header';
 import MonthlyBudget from '../../Components/MonthlyBudget';
 import Footer from '../../Components/Footer'
-// import MonthlyBudget from '../Monthly_budget';
-// import FooterButtons from '../Footer_buttons';
 
-// import { collection, doc, getDocs, getDoc, setDoc, } from 'firebase/firestore';
-// import { db } from '../../src/firebase-config';
-
-
+import { getUser } from '../../AppSecondary';
 
 const HomeScreen = () => {
 
-  const auth = getAuth();
-  const user = auth.currentUser;
-
+  const testusername = getUser();
+  console.log(testusername);
   // let userEmail = '';
 
   // if (user !== null) {
@@ -49,7 +42,7 @@ const HomeScreen = () => {
       {/* <Text>hey</Text> */}
       {/* <Header/> */}
       <Header onPress={handleSignOut} />
-      <MonthlyBudget />
+      <MonthlyBudget user={testusername}/>
       <Footer />
       <StatusBar style="auto" />
     </View>
