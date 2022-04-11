@@ -21,7 +21,6 @@ const SetMonthlyBudgetModal = (props) => {
             "monthlyBudget" : budgetFigure
         })
         setModalVisible(!modalVisible)
-        console.log("clicked", budgetFigure)
     }
 
     return (

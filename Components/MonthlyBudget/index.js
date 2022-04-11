@@ -2,41 +2,73 @@ import React, { useEffect } from 'react';
 import { View, Text, ImageBackground, TouchableOpacity, Button } from 'react-native';
 import SetMonthlyBudgetModal from './SetMonthlyBudgetModal';
 import styles from './styles';
-import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
+import { doc, collection,  getDoc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../Core/Config';
-import { useState } from 'react';
+import { useState, setState } from 'react';
 
 const MonthlyBudget = (props) => {
 
 
   const { onPress, user } = props;
 
-  const [userDoc, setUserDoc] = useState(null)
+  // const [userDoc, setUserDoc] = useState({
+  //   monthlyBudget: ""
+  // })
 
-  function getUserMonthlyBudget() {
-    const myDoc = doc(db, "users", user);
+  const [budgetValue, setBudget ] = useState();
 
-    getDoc(myDoc)
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          setUserDoc(snapshot.data())
-        }
-        else {
-          alert("No doc found")
-        }
-      })
-      .catch((error) => {
-        console.log("Error", error.message)
-      })
+  // const state = {
+  //   budget: userDoc.monthlyBudget
+  // };
 
-  }
+  // export function test() {
+
+  // }
+  // function getUserMonthlyBudget() {
+
+  //   // const unsub = onSnapshot(doc(db, "users", user), (doc) => {
+  //   //   console.log("Current data: ", doc.data());
+  //   // });
+  //   const myDoc = doc(db, "users", user);
+
+  //   getDoc(myDoc)
+  //     .then((snapshot) => {
+  //       if (snapshot.exists) {
+  //         const ye = setUserDoc(snapshot.data())
+  //       }
+  //       else {
+  //         alert("No doc found")
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log("Error", error.message)
+  //     })
+
+
+  // }
+  // // useEffect(() => {
+  //   getUserMonthlyBudget();
+  //   // console.log('userrr', userDoc.monthlyBudget);
+  //   //   console.log("ee", state.budget);
+  // }, [])
+
+  // useEffect(() => {
+  //   // getUserMonthlyBudget();
+  //   console.log('userrr', userDoc.monthlyBudget);
+  //   console.log("ee", state.budget);
+  // }, [userDoc]
+  // )
 
   useEffect(() => {
-    getUserMonthlyBudget();
-    console.log('userrr', userDoc.monthlyBudget);
-  },[userDoc.monthlyBudget]
-  )
 
+    const colRef = collection(db, "users")
+    //real time update
+    onSnapshot(colRef, (snapshot) => {
+        snapshot.docs.forEach((doc) => {          
+            setBudget(doc.data().monthlyBudget)
+        })
+    })
+})
   return (
     <View style={styles.container}>
 
@@ -53,7 +85,7 @@ const MonthlyBudget = (props) => {
           {/* {(userDoc == null) &&
             <Text> sup </Text>
           } */}
-          <Text style={styles.monthlyText}> MARCH BUDGET {userDoc.monthlyBudget} </Text>
+          <Text style={styles.monthlyText}> MARCH BUDGET {budgetValue} </Text>
 
           <SetMonthlyBudgetModal style={styles.budgetIcon} user={user} />
         </View>
