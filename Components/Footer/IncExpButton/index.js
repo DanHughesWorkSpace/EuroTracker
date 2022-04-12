@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, Modal, SafeAreaView, TextInput, onChangeText } from 'react-native';
+import { View, Text, Pressable, Modal, TextInput, Button, Alert } from 'react-native';
 import styles from './styles';
+import { Update } from '../../../AppSecondary';
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
+import { db } from '../../../Core/Config';
+
+import { Picker } from '@react-native-picker/picker';
+
+import moment from 'moment'
+
+import { getUser } from '../../../AppSecondary';
 
 const IncExpButton = (props) => {
 
@@ -10,11 +19,35 @@ const IncExpButton = (props) => {
 
     const [modalVisible, setModalVisible] = useState(false);
 
+    const [selectedValue, setSelectedValue] = useState("food");
+
+    const [descriptionInput, setDescriptionInput] = useState();
+
+    const [valueInput, setValueInput] = useState();
+
+    function saveExpenses(category, description, value, type) {
+        const userEmail = getUser();
+        const date = moment().format("DDMMMYYYY hh:mm:ss a")
+        console.log("category", category, description, value, date, content);
+        const myDoc = doc(db, "users", userEmail, type , date);
+        setDoc(myDoc,{
+            "category": category,
+            "description": description,
+            "value": value
+        })
+          .then(()=>{
+            alert("Update Successful")
+            })
+            .catch((error)=>{
+              alert("Error", error.message)
+            })
+        setModalVisible(!modalVisible)
+    }
+
     return (
         <View>
             <View style={[styles.btn, { borderColor: borderStyle }]}>
                 <Pressable onPress={() => [onPress(), setModalVisible(true)]}>
-                    {/* <Text> ADD </Text> */}
                     <Text > {content} </Text>
                 </Pressable>
             </View>
@@ -30,13 +63,57 @@ const IncExpButton = (props) => {
                 >
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Hello World!</Text>
-                            <Pressable
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisible(!modalVisible)}
-                            >
-                                <Text style={styles.textStyle}>Hide Modal</Text>
-                            </Pressable>
+                            <Button title="close" onPress={() => { setModalVisible(!modalVisible) }}></Button>
+                            <View>
+                                <Text>Enter Your Expense </Text>
+                            </View>
+                            <View style={styles.inputForm}>
+
+                                <View style={styles.firstrow}>
+                                    <View>
+                                        <Text>Category</Text>
+                                        <Picker style={styles.dropdown}
+                                            selectedValue={selectedValue}
+                                            onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+                                            itemStyle={{ height: 40,backgroundColor: "grey", color: "blue", fontSize: 12, padding: 0 }}
+                                        >
+                                            <Picker.Item label="Food" value="food" />
+                                            <Picker.Item label="Transport" value="transport" />
+                                            <Picker.Item label="Bills" value="bills" />
+                                            <Picker.Item label="Reoccuring" value="reoccuring" />
+                                            <Picker.Item label="Other" value="other" />
+                                        </Picker>
+                                        <Text> {selectedValue}</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.secondrow}>
+                                    <View>
+                                        <Text>Description</Text>
+                                        <TextInput style={{
+                                            // width: '100%',
+                                            fontSize: 14,
+                                            borderColor: 'grey',
+                                            borderWidth: 2,
+                                            padding: 2,
+                                            marginVertical: 10
+                                        }} placeholder='E.g. Subway' placeholderTextColor={'grey'} onChangeText={(text) => { setDescriptionInput(text)}} ></TextInput>
+                                    </View>
+                                    <View>
+                                        <Text>Value</Text>
+                                        <TextInput style={{
+                                            // width: '100%',
+                                            fontSize: 14,
+                                            borderColor: 'grey',
+                                            borderWidth: 2,
+                                            padding: 2,
+                                            marginVertical: 10
+                                        }} placeholder='E.g. 600' placeholderTextColor={'grey'} onChangeText={(text) => { setValueInput(text)}} ></TextInput>
+                                    </View>
+                                </View>
+                            </View>
+
+                            <Button title="Update Doc" onPress={() => { saveExpenses(selectedValue, descriptionInput, valueInput, content) }}></Button>
+
                         </View>
                     </View>
                 </Modal>

@@ -53,7 +53,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
   // const Update = (value,merge) => {
   export function Update(value,merge) {
     const userEmail = getUser()
-    const myDoc = doc(db, "users", userEmail);
+    const myDoc = doc(db, "users", userEmail, );
     console.log("Update clicked");
     setDoc(myDoc,value,{merge: merge})
       .then(()=>{

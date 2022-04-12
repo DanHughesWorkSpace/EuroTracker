@@ -4,8 +4,8 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     btn: {
         backgroundColor: '#ffffff',
-        height: 100,
-        width: 100,
+        // height: 100,
+        // width: 100,
         borderRadius: 50,
         borderWidth: 5,
         justifyContent: 'center',
@@ -31,6 +31,31 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5
+    },
+    inputForm: {
+        // display: 'flex',
+        // flexDirection: 'row',
+        // justifyContent: 'space-around',
+        // width: '100%'
+        // padding: 10,
+        
+    },
+    firstrow: {
+        // width: '100%'
+    },
+    dropdown: {
+        // borderColor: 'black',
+        // borderWidth: 1,
+        width: 150,
+        // padding: 20
+        // height: '100%'
+
+    },
+    secondrow: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        // width: '100%'
     },
     button: {
         borderRadius: 20,
