@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { borderColor } from "react-native/Libraries/Components/View/ReactNativeStyleAttributes";
 
 const styles = StyleSheet.create({
     container: {
@@ -31,9 +32,15 @@ const styles = StyleSheet.create({
         width: '95%'
     },
     progressBar: {
-        height: '50%',
+        // height: '70%',
         width: '100%',
-        backgroundColor: 'red'
+        backgroundColor: 'red',
+
+    },
+    progressBarBorder: {
+        borderWidth: 2,
+        borderRightWidth: 4,
+        borderColor: 'yellow'
     }
 })
 

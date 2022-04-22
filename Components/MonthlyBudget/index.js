@@ -7,6 +7,7 @@ import { db } from '../../Core/Config';
 import { useState } from 'react';
 
 import moment from 'moment'
+import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
 
 const MonthlyBudget = (props) => {
@@ -19,6 +20,8 @@ const MonthlyBudget = (props) => {
 
   const [userMonthlyExpense, setUserMonthlyExpense] = useState(0);
 
+  const [progressPercent, setProgressPercent] = useState();
+
   useEffect(() => {
 
     const userMonthlyBudget = collection(db, "users")
@@ -26,16 +29,18 @@ const MonthlyBudget = (props) => {
     const date = moment().format("DDMMMYYYY");
     const totalMonthlyIncome = collection(db, "users", user, date)
 
-    getTodaysInputs(totalMonthlyIncome)
+    getTodaysInputs(totalMonthlyIncome, userMonthlyExpense)
     //real time update
     onSnapshot(userMonthlyBudget, (snapshot) => {
       snapshot.docs.forEach((doc) => {
         setBudget(doc.data().monthlyBudget)
       })
     })
+
+
   })
 
-  function getTodaysInputs(totalMonthlyIncome) {
+  function getTodaysInputs(totalMonthlyIncome, totalMonthlyExpense) {
     const incomeValues = [];
     const expenseValues = [];
     onSnapshot(totalMonthlyIncome, (snapshot) => {
@@ -50,6 +55,7 @@ const MonthlyBudget = (props) => {
       })
       calcIncome(incomeValues)
       calcExpense(expenseValues)
+      calcProgressBar(userMonthlyExpense, budgetValue)
     })
 
     function calcIncome(incomeArray) {
@@ -68,6 +74,11 @@ const MonthlyBudget = (props) => {
         initialValue
       );
       setUserMonthlyExpense(sumWithInitial)
+    }
+
+    function calcProgressBar(expenses, budget) {
+      const percentage = (expenses / budget * 100) + "%";
+      setProgressPercent(percentage)
     }
   }
   return (
@@ -88,8 +99,15 @@ const MonthlyBudget = (props) => {
           <SetMonthlyBudgetModal style={styles.budgetIcon} user={user} />
         </View>
         <View style={styles.progressBar}>
+          <View style={styles.progressBarBorder}>
+            <View style={{ backgroundColor: 'yellow', width: progressPercent,}}>
+              <Text>
+                £{userMonthlyExpense}/£{budgetValue}
+              </Text>
+            </View>
+          </View>
           <Text>
-            £{userMonthlyExpense}/£{budgetValue}
+            You have spent {progressPercent} of your budget.
           </Text>
         </View>
       </View>
