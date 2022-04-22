@@ -7,11 +7,9 @@ const FooterButtons = (props) => {
     return (
         <View style={styles.container}>
             <View style={styles.btnContainer}>
-                <IncExpButton content={"INCOME"} onPress={() => {
-                    console.warn("Income was clicked") }} />
+                <IncExpButton content={"INCOME"} />
 
-                <IncExpButton content={"EXPENSE"} onPress={() => {
-                    console.warn("Expense was clicked") }} />
+                <IncExpButton content={"EXPENSE"} />
             </View>
         </View>
     )

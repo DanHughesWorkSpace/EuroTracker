@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, Modal, TextInput, Button, Alert } from 'react-native';
 import styles from './styles';
 import { Update } from '../../../AppSecondary';
@@ -13,33 +13,55 @@ import { getUser } from '../../../AppSecondary';
 
 const IncExpButton = (props) => {
 
-    const { content, onPress } = props;
+    const { content } = props;
+
+    const IncomeDataset = [
+        "Salary", "Side Hussle", 'Asset Sales'
+    ]
+
+    const ExpenseDataset = [
+        "Food", "Transport", "Bills", "Reoccuring", "other"
+    ]
+
+    const [data, setdata] = useState(ExpenseDataset)
 
     const borderStyle = content === 'INCOME' ? 'green' : 'red';
 
     const [modalVisible, setModalVisible] = useState(false);
 
-    const [selectedValue, setSelectedValue] = useState("food");
+    const [selectedValue, setSelectedValue] = useState(0);
 
     const [descriptionInput, setDescriptionInput] = useState();
 
     const [valueInput, setValueInput] = useState();
 
-    function saveExpenses(category, description, value, type) {
+    function checkModalType(type) {
+        if (type === "INCOME") {
+            // DisplayDataset = IncomeDataset
+            setdata(IncomeDataset)
+        } else {
+            // DisplayDataset = ExpenseDataset
+            setdata(ExpenseDataset)
+        }
+    }
+
+    function saveExpenses(category, description, value) {
         const userEmail = getUser();
-        const date = moment().format("DDMMMYYYY hh:mm:ss a")
-        console.log("category", category, description, value, date, content);
-        const myDoc = doc(db, "users", userEmail, type , date);
-        setDoc(myDoc,{
+        const date = moment().format("DDMMMYYYY");
+        const timestamp = moment().format("hh:mm:ss a");
+        console.log("category", category);
+        const myDoc = doc(db, "users", userEmail, date, timestamp);
+        setDoc(myDoc, {
             "category": category,
             "description": description,
-            "value": value
+            "value": value,
+            "type": content
         })
-          .then(()=>{
-            alert("Update Successful")
+            .then(() => {
+                alert("Update Successful")
             })
-            .catch((error)=>{
-              alert("Error", error.message)
+            .catch((error) => {
+                alert("Error", error.message)
             })
         setModalVisible(!modalVisible)
     }
@@ -47,7 +69,7 @@ const IncExpButton = (props) => {
     return (
         <View>
             <View style={[styles.btn, { borderColor: borderStyle }]}>
-                <Pressable onPress={() => [onPress(), setModalVisible(true)]}>
+                <Pressable onPress={() => [setModalVisible(true), checkModalType(content)]}>
                     <Text > {content} </Text>
                 </Pressable>
             </View>
@@ -65,7 +87,7 @@ const IncExpButton = (props) => {
                         <View style={styles.modalView}>
                             <Button title="close" onPress={() => { setModalVisible(!modalVisible) }}></Button>
                             <View>
-                                <Text>Enter Your Expense </Text>
+                                <Text>ENTER YOUR {content} </Text>
                             </View>
                             <View style={styles.inputForm}>
 
@@ -75,15 +97,12 @@ const IncExpButton = (props) => {
                                         <Picker style={styles.dropdown}
                                             selectedValue={selectedValue}
                                             onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-                                            itemStyle={{ height: 40,backgroundColor: "grey", color: "blue", fontSize: 12, padding: 0 }}
+                                            itemStyle={{ height: 40, backgroundColor: "grey", color: "blue", fontSize: 12, padding: 0 }}
                                         >
-                                            <Picker.Item label="Food" value="food" />
-                                            <Picker.Item label="Transport" value="transport" />
-                                            <Picker.Item label="Bills" value="bills" />
-                                            <Picker.Item label="Reoccuring" value="reoccuring" />
-                                            <Picker.Item label="Other" value="other" />
+                                            {data.map((item, index) => {
+                                                return (<Picker.Item label={item} value={index} key={index} />)
+                                            })}
                                         </Picker>
-                                        <Text> {selectedValue}</Text>
                                     </View>
                                 </View>
                                 <View style={styles.secondrow}>
@@ -96,7 +115,7 @@ const IncExpButton = (props) => {
                                             borderWidth: 2,
                                             padding: 2,
                                             marginVertical: 10
-                                        }} placeholder='E.g. Subway' placeholderTextColor={'grey'} onChangeText={(text) => { setDescriptionInput(text)}} ></TextInput>
+                                        }} placeholder='E.g. Subway' placeholderTextColor={'grey'} onChangeText={(text) => { setDescriptionInput(text) }} ></TextInput>
                                     </View>
                                     <View>
                                         <Text>Value</Text>
@@ -107,12 +126,12 @@ const IncExpButton = (props) => {
                                             borderWidth: 2,
                                             padding: 2,
                                             marginVertical: 10
-                                        }} placeholder='E.g. 600' placeholderTextColor={'grey'} onChangeText={(text) => { setValueInput(text)}} ></TextInput>
+                                        }} placeholder='E.g. 600' placeholderTextColor={'grey'} onChangeText={(text) => { setValueInput(text) }} ></TextInput>
                                     </View>
                                 </View>
                             </View>
 
-                            <Button title="Update Doc" onPress={() => { saveExpenses(selectedValue, descriptionInput, valueInput, content) }}></Button>
+                            <Button title="Update Doc" onPress={() => { saveExpenses(selectedValue, descriptionInput, valueInput) }}></Button>
 
                         </View>
                     </View>

@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         // justifyContent: 'space-around',
         // width: '100%'
         // padding: 10,
-        
+
     },
     firstrow: {
         // width: '100%'
@@ -48,8 +48,7 @@ const styles = StyleSheet.create({
         // borderWidth: 1,
         width: 150,
         // padding: 20
-        // height: '100%'
-
+        // height: '100%
     },
     secondrow: {
         display: 'flex',
