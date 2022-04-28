@@ -35,6 +35,12 @@ const IncExpButton = (props) => {
 
     const [valueInput, setValueInput] = useState();
 
+    // useEffect(() => {
+
+    //     console.log("checkk EXP ", selectedValue)
+
+    // }, selectedValue)
+
     function checkModalType(type) {
         if (type === "INCOME") {
             // DisplayDataset = IncomeDataset
@@ -46,16 +52,21 @@ const IncExpButton = (props) => {
     }
 
     function saveExpenses(category, description, value) {
+        const item = data[category]
+        console.log("catgory", category, item);
+
         const userEmail = getUser();
         const date = moment().format("DDMMMYYYY");
+        const month = moment().format("MMM")
         const timestamp = moment().format("hh:mm:ss a");
-        console.log("category", category);
-        const myDoc = doc(db, "users", userEmail, date, timestamp);
+        console.log("category", category ,content);
+        const myDoc = doc(db, "users", userEmail, month, date, content, timestamp);
         setDoc(myDoc, {
-            "category": category,
+            "category": item,
             "description": description,
             "value": value,
-            "type": content
+            // "type": content,
+            // "timestamp": timestamp
         })
             .then(() => {
                 alert("Update Successful")
@@ -96,7 +107,7 @@ const IncExpButton = (props) => {
                                         <Text>Category</Text>
                                         <Picker style={styles.dropdown}
                                             selectedValue={selectedValue}
-                                            onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+                                            onValueChange={(itemValue, itemIndex) => setSelectedValue(itemIndex)}
                                             itemStyle={{ height: 40, backgroundColor: "grey", color: "blue", fontSize: 12, padding: 0 }}
                                         >
                                             {data.map((item, index) => {
