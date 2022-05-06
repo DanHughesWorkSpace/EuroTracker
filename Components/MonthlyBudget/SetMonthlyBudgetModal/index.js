@@ -6,6 +6,8 @@ import { db } from '../../../Core/Config';
 import { doc, getDoc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore'
 
 import {Update} from '../../../AppSecondary';
+
+import moment from 'moment'
 // import auth from '../../firebase';
 
 const SetMonthlyBudgetModal = (props) => {
@@ -15,13 +17,18 @@ const SetMonthlyBudgetModal = (props) => {
     const [modalVisible, setModalVisible] = useState(false);
 
     const [text, setText] = useState("");
+    // const userEmail = getUser();
+    // const month = moment().format("MMM");
 
+    // console.log("user", userEmail )
     function saveMonthlyBudget(budgetFigure) {
         Update({
             "monthlyBudget" : budgetFigure
         })
         setModalVisible(!modalVisible)
     }
+
+   
 
     return (
         <View style={styles.container}>

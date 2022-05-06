@@ -13,6 +13,10 @@ import { getUser } from '../../../AppSecondary';
 
 const IncExpButton = (props) => {
 
+    // code now updates a field in DB called "totalExpenses" in Document "TotalMonthlyExpenses" to keep track of SUM of expenses for that month
+    // need to pull new totalExpenses figure
+        // esnure it updates automatically
+
     const { content } = props;
 
     const IncomeDataset = [
@@ -35,38 +39,63 @@ const IncExpButton = (props) => {
 
     const [valueInput, setValueInput] = useState();
 
-    // useEffect(() => {
+    const [selectedModal, setSelectedModal] = useState();
 
-    //     console.log("checkk EXP ", selectedValue)
+    const [previouslySavedTotalExpenses, setPreviouslySavedTotalExpenses] = useState();
 
-    // }, selectedValue)
+    const userEmail = getUser()
+    const month = moment().format("MMM");
+
+    useEffect(() => {
+        getUserMonthlyExpenseValue();
+    }, [])
 
     function checkModalType(type) {
         if (type === "INCOME") {
-            // DisplayDataset = IncomeDataset
             setdata(IncomeDataset)
         } else {
-            // DisplayDataset = ExpenseDataset
             setdata(ExpenseDataset)
         }
     }
 
+    function getUserMonthlyExpenseValue() {
+        const myDoc = doc(db, "users", userEmail, month, "totalMonthlyExpenses");
+        getDoc(myDoc)
+            .then((snapshot) => {
+                if (snapshot.exists) {
+                    setPreviouslySavedTotalExpenses(Number(snapshot.data().totalExpenses))
+                }
+                else {
+                    alert("No doc found")
+                }
+            })
+            .catch((error) => {
+                console.log("Error", error.message)
+            })
+    }
+
+    function updateTotalExpensesValue(newValue) {
+        let updatedValue = previouslySavedTotalExpenses;
+
+        updatedValue += Number(newValue)
+
+        const totalExpensesDocument = doc(db, "users", userEmail, month, "totalMonthlyExpenses");
+
+        setDoc(totalExpensesDocument, {
+            "totalExpenses": updatedValue,
+        })
+    }
+
     function saveExpenses(category, description, value) {
         const item = data[category]
-        console.log("catgory", category, item);
 
-        const userEmail = getUser();
         const date = moment().format("DDMMMYYYY");
-        const month = moment().format("MMM")
         const timestamp = moment().format("hh:mm:ss a");
-        console.log("category", category ,content);
         const myDoc = doc(db, "users", userEmail, month, date, content, timestamp);
         setDoc(myDoc, {
             "category": item,
             "description": description,
             "value": value,
-            // "type": content,
-            // "timestamp": timestamp
         })
             .then(() => {
                 alert("Update Successful")
@@ -74,9 +103,9 @@ const IncExpButton = (props) => {
             .catch((error) => {
                 alert("Error", error.message)
             })
-        setModalVisible(!modalVisible)
+        setModalVisible(!modalVisible);
+        updateTotalExpensesValue(value)
     }
-
     return (
         <View>
             <View style={[styles.btn, { borderColor: borderStyle }]}>

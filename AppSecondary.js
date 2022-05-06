@@ -5,6 +5,9 @@ import { db } from './Core/Config';
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
+import moment from 'moment'
+import { useState } from 'react';
+
 // export default function functions() {
 
     // const [userDoc, setUserDoc] = useState(null)
@@ -79,9 +82,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
   export function getUser() {
     const auth = getAuth();
     const uid = auth.currentUser.providerData[0].uid;
-  
-    console.log("Successful login for", uid);
-    return uid
+      return uid
   }
 
   // export default  Read;
