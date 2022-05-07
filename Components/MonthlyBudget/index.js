@@ -7,13 +7,14 @@ import { db } from '../../Core/Config';
 import { useState } from 'react';
 
 import moment from 'moment'
+import { getUser } from '../../AppSecondary';
 
 // progress bar not updating automatically, needs a CTRL S
 // total monthly EXPs seem to be updating accordingly
 
 // pull new totalExpenses figure and display accordingly
 // ensure page updates when a value has changed
-  //  get budget, total Expenses and percentage complete figure to update automatically
+//  get budget, total Expenses and percentage complete figure to update automatically
 
 const MonthlyBudget = (props) => {
 
@@ -27,23 +28,56 @@ const MonthlyBudget = (props) => {
 
   const [progressPercent, setProgressPercent] = useState();
 
+  const [totalMonthlyExpenses, setTotalMonthlyExpenses] = useState();
+
+  const userEmail = getUser();
+  const date = moment().format("DDMMMYYYY");
+  const month = moment().format("MMM");
+  const day = moment().format("DD");
+  const year = moment().format("YYYY");
+
   useEffect(() => {
 
     const userMonthlyBudget = collection(db, "users")
-
-    const date = moment().format("DDMMMYYYY");
-    const month = moment().format("MMM");
-    const day = moment().format("DD");
-    const year = moment().format("YYYY");
+    const userTotalMonthlyIncome = collection(db, "users", userEmail, month, );
+  
 
     getPreviousDaysInCurrentMonth(day, month, year);
-
+    // getUserMonthlyExpenseValue();
     onSnapshot(userMonthlyBudget, (snapshot) => {
       snapshot.docs.forEach((doc) => {
         setBudget(doc.data().monthlyBudget)
       })
     })
-  },[])
+    onSnapshot(userTotalMonthlyIncome, (snapshot) => {
+      snapshot.docs.forEach((doc) => {
+        console.log(doc.data().totalExpenses);
+        setTotalMonthlyExpenses(doc.data().totalExpenses)
+      })
+    })
+
+    const progress = (totalMonthlyExpenses/budgetValue * 100 ).toFixed(2) + "%"
+    setProgressPercent(progress)
+
+    console.log("test total", totalMonthlyExpenses);
+  }, [totalMonthlyExpenses])
+
+  // function getUserMonthlyExpenseValue() {
+  //   const myDoc = doc(db, "users", userEmail, month, "totalMonthlyExpenses");
+  //   getDoc(myDoc)
+  //     .then((snapshot) => {
+  //       if (snapshot.exists) {
+  //         setTotalMonthlyExpenses(Number(snapshot.data().totalExpenses))
+  //       }
+  //       else {
+  //         alert("No doc found")
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log("Error", error.message)
+  //     })
+  //     console.log("total", totalMonthlyExpenses);
+  // }
 
   function getPreviousDaysInCurrentMonth(dayIndex, month, year) {
     console.log("day index", dayIndex)
@@ -57,7 +91,7 @@ const MonthlyBudget = (props) => {
         dates.push(i + month + year)
       }
     }
-    getCurrentMonthExpensesData(dates, month) //this function may remain just to be able to filter throught different categories and so on
+    //getCurrentMonthExpensesData(dates, month) //this function may remain just to be able to filter throught different categories and so on
   }
 
   // function getCurrentMonthExpensesData(datesArray, currentMonth) {
@@ -88,31 +122,6 @@ const MonthlyBudget = (props) => {
   //   calcProgressBar(userMonthlyExpense, budgetValue)
   // }
 
-  // function calcIncome(incomeArray) {
-  //   let sum = 0;
-  //   for(var i=0;i<incomeArray.length;i++){
-  //     sum += Number(incomeArray[i].value)
-  //     console.log("sum", sum);
-  //   }
-  //   // setUserMonthlyIncome(sum)
-  // }
-
-  // function calcExpense(expenseArray) {
-  //   // console.log("exp array", expenseArray);
-  //   let sum = 0;
-  //   for(var i=0;i<expenseArray.length;i++){
-  //     // console.log("number", expenseArray[i].value);
-  //     sum += Number(expenseArray[i].value)
-  //     // console.log("sum", sum);
-  //   }
-  //   setUserMonthlyExpense(sum)
-  //   // console.log("user monthly expense1", userMonthlyExpense);
-  // }
-
-  function calcProgressBar(expenses, budget) {
-    const percentage = (expenses / budget * 100) + "%";
-    setProgressPercent(percentage)
-  }
   return (
     <View style={styles.container}>
 
@@ -134,7 +143,7 @@ const MonthlyBudget = (props) => {
           <View style={styles.progressBarBorder}>
             <View style={{ backgroundColor: 'yellow', width: progressPercent, }}>
               <Text>
-                £{userMonthlyExpense}/£{budgetValue}
+                £{totalMonthlyExpenses}/£{budgetValue}
               </Text>
             </View>
           </View>

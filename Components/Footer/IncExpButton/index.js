@@ -15,7 +15,7 @@ const IncExpButton = (props) => {
 
     // code now updates a field in DB called "totalExpenses" in Document "TotalMonthlyExpenses" to keep track of SUM of expenses for that month
     // need to pull new totalExpenses figure
-        // esnure it updates automatically
+    // esnure it updates automatically
 
     const { content } = props;
 
@@ -41,13 +41,16 @@ const IncExpButton = (props) => {
 
     const [selectedModal, setSelectedModal] = useState();
 
-    const [previouslySavedTotalExpenses, setPreviouslySavedTotalExpenses] = useState();
+    const [previouslySavedTotalExpenses, setPreviouslySavedTotalExpenses] = useState(0);
 
     const userEmail = getUser()
     const month = moment().format("MMM");
 
     useEffect(() => {
+        console.log("check", previouslySavedTotalExpenses);
         getUserMonthlyExpenseValue();
+        // const hi = Read();
+        // console.log("hi", hi);
     }, [])
 
     function checkModalType(type) {
@@ -67,23 +70,31 @@ const IncExpButton = (props) => {
                 }
                 else {
                     alert("No doc found")
+                    // console.log("does not")
                 }
             })
             .catch((error) => {
                 console.log("Error", error.message)
             })
+            console.log("ya baby", previouslySavedTotalExpenses);
+
     }
 
     function updateTotalExpensesValue(newValue) {
+
         let updatedValue = previouslySavedTotalExpenses;
+        console.log("updated value prev", updatedValue);
 
         updatedValue += Number(newValue)
 
+        console.log("updated value new", updatedValue);
         const totalExpensesDocument = doc(db, "users", userEmail, month, "totalMonthlyExpenses");
 
         setDoc(totalExpensesDocument, {
-            "totalExpenses": updatedValue,
+            "totalExpenses": Number(updatedValue),
         })
+
+        getUserMonthlyExpenseValue()
     }
 
     function saveExpenses(category, description, value) {
