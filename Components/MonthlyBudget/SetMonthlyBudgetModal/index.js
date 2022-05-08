@@ -33,7 +33,7 @@ const SetMonthlyBudgetModal = (props) => {
     return (
         <View style={styles.container}>
             <View style={[styles.btn]}>
-                <Pressable onPress={() => [console.log("yes"), setModalVisible(true)]}>
+                <Pressable onPress={() => [setModalVisible(true)]}>
                     {/* <Text> ADD </Text> */}
                     <Text > T </Text>
                 </Pressable>
