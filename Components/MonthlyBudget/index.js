@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, Button } from 'react-native';
+import { View, Text, FlatList, ImageBackground, TouchableOpacity, Button } from 'react-native';
 import SetMonthlyBudgetModal from './SetMonthlyBudgetModal';
 import styles from './styles';
 import { doc, collection, getDoc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore'
@@ -9,18 +9,7 @@ import { useState } from 'react';
 import moment from 'moment'
 import { getUser } from '../../AppSecondary';
 
-import PieChartWithDifferentArcs from '../PieChart/index';
-
 import { PieChart } from 'react-native-svg-charts'
-
-// import { PieChart } from 'react-native-chart-kit';
-
-// progress bar not updating automatically, needs a CTRL S
-// total monthly EXPs seem to be updating accordingly
-
-// pull new totalExpenses figure and display accordingly
-// ensure page updates when a value has changed
-//  get budget, total Expenses and percentage complete figure to update automatically
 
 const MonthlyBudget = (props) => {
 
@@ -42,7 +31,21 @@ const MonthlyBudget = (props) => {
 
   const [data, setData] = useState();
 
-  const colors = ['#600080', '#9900cc', '#ecb3ff', '#c61aff', '#d966ff']
+  const [testData, setTestData] = useState([
+    {
+      key: 0,
+      value: 0,
+      svg: { fill: '' },
+    }
+  ]);
+
+  const colors = [
+    '#13a9cc',
+    '#198cee',
+    '#bc70cf',
+    '#ad6236',
+    '#c840c2',
+  ]
 
   const userEmail = getUser();
   const date = moment().format("DDMMMYYYY");
@@ -50,11 +53,23 @@ const MonthlyBudget = (props) => {
   const day = moment().format("DD");
   const year = moment().format("YYYY");
 
-  useEffect(() => {
+  const chartConfig = {
+    backgroundGradientFrom: '#1E2923',
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: '#08130D',
+    backgroundGradientToOpacity: 0.5,
+    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    strokeWidth: 2,
+    useShadowColorFromDataset: false,
+  };
 
+  useEffect(() => {
     const userMonthlyBudget = collection(db, "users")
     const userTotalMonthlyIncome = collection(db, "users", userEmail, month,);
 
+    const testt = getPieChartData(pieChartValueArray)
+    setTestData(testt)
+    console.log("yes", testData);
 
     getPreviousDaysInCurrentMonth(day, month, year);
     // getUserMonthlyExpenseValue();
@@ -65,7 +80,7 @@ const MonthlyBudget = (props) => {
     })
     onSnapshot(userTotalMonthlyIncome, (snapshot) => {
       snapshot.docs.forEach((doc) => {
-        console.log(doc.data().totalExpenses);
+        // console.log(doc.data().totalExpenses);
         setTotalMonthlyExpenses(doc.data().totalExpenses)
       })
     })
@@ -75,8 +90,17 @@ const MonthlyBudget = (props) => {
 
   }, [totalMonthlyExpenses])
 
+  function getPieChartData(data) {
+    return data.map((item, index) => {
+      return {
+        key: index,
+        value: item,
+        svg: { fill: colors[index] },
+      }
+    })
+  }
+
   function getPreviousDaysInCurrentMonth(dayIndex, month, year) {
-    // console.log("day index", dayIndex)
     const dates = []
     for (var i = 1; i <= dayIndex; i++) {
       const singleDigitConvert = ""
@@ -98,10 +122,7 @@ const MonthlyBudget = (props) => {
         snapshot.docs.forEach((doc) => {
           expenseArray.push(doc.data())
         })
-        // console.log("EXP22", expenseArray);
-        // calcExpense(expenseArray);
         getCategoryItemsForPieChart(expenseArray)
-        // console.log("expensesarray", expenseArray);
 
       })
       expenseArray = [];
@@ -121,6 +142,7 @@ const MonthlyBudget = (props) => {
   }
 
   function getCategoryItemsForPieChart(array) {
+    // console.log("array", array);
     const categoryList = {}
     const categoryValues = []
     for (var i = 0; i < array.length; i++) {
@@ -128,7 +150,6 @@ const MonthlyBudget = (props) => {
         categoryList[array[i].category] = 0
       }
     }
-    // calculateCategoriesForPieChart(array, categoryList)
     setPieChartValues(array, categoryList)
   }
 
@@ -139,21 +160,20 @@ const MonthlyBudget = (props) => {
 
       categoryList[category] = Number(categoryList[mainArray[i].category]) + Number(mainArray[i].value)
     }
+
     const keysArray = []
     const valuesArray = []
     for (const item in categoryList) {
       keysArray.push(item)
       valuesArray.push(categoryList[item])
     }
-    // setPieChartKeysArray(keysArray);
-    // setPieChartValueArray(valuesArray)
-    test(keysArray,valuesArray)  
-    // console.log("final", keysArray,valuesArray  );
+
+    setPieChartKeysArray(keysArray);
+    setPieChartValueArray(valuesArray)
+    // test(keysArray,valuesArray)  
   }
 
   function test(keysDataArray, valuesDataArray) {
-    // console.log("test", keysDataArray,valuesDataArray);
-
     const data1 = []
 
     for (var i = 0; i < keysDataArray.length; i++) {
@@ -166,43 +186,13 @@ const MonthlyBudget = (props) => {
       obj.key = keysDataArray[i]
       obj.value = valuesDataArray[i]
       obj.svg = { fill: colors[i] }
+      obj.onPress = () => { console.log("done") }
       data1.push(obj)
-      // console.log("loop", data1);
       setData(data1)
 
     }
     console.log("check data1", data);
   }
-
-  const data11 = [
-    {
-        key: "Food",
-        value: 90,
-        svg: { fill: '#600080' },
-        // arc: { outerRadius: '130%', cornerRadius: 10, }
-        
-    },
-    {
-        key: "B",
-        value: 50,
-        svg: { fill: '#9900cc' }
-    },
-    {
-        key: "C",
-        value: 40,
-        svg: { fill: '#c61aff' }
-    },
-    {
-        key: "D",
-        value: 95,
-        svg: { fill: '#d966ff' }
-    },
-    {
-        key: "E",
-        value: 35,
-        svg: { fill: '#ecb3ff' }
-    }
-]
   return (
     <View style={styles.container}>
       {/* <ImageBackground source={require('../../assets/images/background.jpg')} style={styles.image} /> */}
@@ -212,16 +202,6 @@ const MonthlyBudget = (props) => {
           <Text> Click </Text>
         </TouchableOpacity>
       </View> */}
-
-      {/* <PieChart
-        data={data}
-        // width={screenWidth}
-        height='100%'
-        chartConfig={chartConfig}
-        accessor="population"
-        // backgroundColor="transparent"
-        paddingLeft="15"
-      /> */}
       <View style={styles.monthlyBudgetContainer}>
         <View style={styles.monthlyHeader}>
           <Text style={styles.monthlyText}> MARCH BUDGET {budgetValue}</Text>
@@ -248,15 +228,26 @@ const MonthlyBudget = (props) => {
         <View style={styles.pieChartHeader}>
           <Text>Expenses Distribution Graph</Text>
         </View>
-        {/* <PieChartWithDynamicSlices keysDataArray={pieChartKeysArray} valuesDataArray={pieChartValueArray}/> */}
-
-        {/* <PieChartWithDifferentArcs array1={data} /> */}
-        <PieChart
-            style={{ height: 200 }}
-            outerRadius={'70%'}
-            innerRadius={10}
-            data={data}
-        />
+        <View style={styles.pieChartContainer}>
+          <PieChart
+            style={{ width: 200, height: 200 }}
+            data={testData}
+            chartConfig={chartConfig} />
+          <View style={styles.pieChartLegend}>
+            {
+              colors.map(function (item, i) {
+                return <View style={styles.legendContainer}>
+                  <View style={[styles.square, { backgroundColor: item }]}></View>
+                  <Text style={{ color: item }}>
+                    {pieChartKeysArray[i]}</Text>
+                    <Text style={{ color: item }}>
+                    £{pieChartValueArray[i]}</Text>
+                </View>
+                  ;
+              })
+            }
+          </View>
+        </View>
       </View>
     </View>
   )
